@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "sourceMap": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
+}
