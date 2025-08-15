@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = "postgresql://e2ee:saifuyqs7agyvquhaui0f0svy@localhost:5432/e2ee?schema=public"
+}
+
+model User {
+  id String @id  @default(uuid())
+  username  String  @unique
+  passwordHash  String
+  passwordSalt  String
+  avatar  String
+  userKeys  UserKey[]
+  chatAsFirstUser  Chat[] @relation("ChatFirstUser")
+  chatAsSecondUser  Chat[] @relation("ChatSecondUser")
+  sender  Message[]  @relation("Sender")
+  recipient Message[] @relation("Recipient")
+}
+
+model UserKey {
+  id  String  @id @default(uuid())
+  publicKey Bytes
+  user  User? @relation(fields: [userId], references: [id])
+  userId  String?
+}
+
+model Chat {
+  id  String  @id @default(uuid())
+  user User? @relation(name: "ChatFirstUser", fields: [firstUserId], references: [id])
+  firstUserId String?
+  secondUser  User? @relation(name: "ChatSecondUser", fields: [secondUserId], references: [id])
+  secondUserId  String?
+  message Message[]
+}
+
+model Message {
+  id  String  @id @default(uuid())
+  sender  User? @relation(name: "Sender", fields: [senderId], references: [id])
+  senderId  String
+  recipient User? @relation(name: "Recipient", fields: [recipientId], references: [id])
+  recipientId String
+  chat Chat?  @relation(fields: [chatId], references: [id])
+  chatId  String
+  cipherText  BigInt
+  iv Bytes
+  timestamp DateTime
+}
